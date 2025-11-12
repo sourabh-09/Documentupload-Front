@@ -5,10 +5,11 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
   const [docName, setDocName] = useState("");
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [message, setMessage] = useState(null); // ✅ For success/error messages
 
   const handleUpload = async () => {
     if (!file || !docName) {
-      alert("Please enter a document name and select a file");
+      setMessage({ type: "error", text: "Please enter a document name and select a file" });
       return;
     }
 
@@ -19,10 +20,12 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
     try {
       setUploading(true);
       setProgress(0);
+      setMessage(null);
 
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", `${apiBaseUrl}/api/upload`);
+      xhr.open("POST", `${apiBaseUrl}/home/upload`);
 
+      // Track progress
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
           const percent = Math.round((event.loaded / event.total) * 100);
@@ -37,21 +40,26 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
         setFile(null);
 
         if (xhr.status === 200) {
+          setMessage({ type: "success", text: "✅ Upload successful!" });
           onUploadSuccess();
+
+          // Hide success message after 3 seconds
+          setTimeout(() => setMessage(null), 3000);
         } else {
-          alert("Upload failed: " + xhr.responseText);
+          setMessage({ type: "error", text: `❌ Upload failed: ${xhr.responseText}` });
         }
       };
 
       xhr.onerror = () => {
         setUploading(false);
-        alert("Upload failed: network error");
+        setMessage({ type: "error", text: "❌ Network error during upload" });
       };
 
       xhr.send(formData);
     } catch (error) {
       console.error("Upload error:", error);
       setUploading(false);
+      setMessage({ type: "error", text: "Unexpected error occurred" });
     }
   };
 
@@ -82,12 +90,26 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
           {uploading ? "Uploading..." : "Upload Document"}
         </button>
 
+        {/* Progress bar */}
         {uploading && (
-          <div className="w-full bg-gray-200 rounded-full h-3 mt-2">
+          <div className="w-full bg-gray-200 rounded-full h-3 mt-2 overflow-hidden">
             <div
-              className="bg-blue-500 h-3 rounded-full transition-all"
+              className="bg-blue-500 h-3 transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
+          </div>
+        )}
+
+        {/* ✅ Success / ❌ Error message */}
+        {message && (
+          <div
+            className={`mt-3 text-center font-medium p-2 rounded-lg animate-fade-in ${
+              message.type === "success"
+                ? "bg-green-100 text-green-700 border border-green-300"
+                : "bg-red-100 text-red-700 border border-red-300"
+            }`}
+          >
+            {message.text}
           </div>
         )}
       </div>

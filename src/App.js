@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import FileUpload from "./components/FileUpload";
 import FileList from "./components/FileList";
 
-const API_BASE_URL = "https://your-backend-app.onrender.com"; // <-- change this
+const API_BASE_URL = "https://documentupload-0vhz.onrender.com"; // <-- change this
 
 function App() {
   const [files, setFiles] = useState([]);
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/files`);
+      const response = await fetch(`${API_BASE_URL}/home/files`);
       if (response.ok) {
         const data = await response.json();
         setFiles(data);
@@ -33,7 +33,7 @@ function App() {
         <FileUpload apiBaseUrl={API_BASE_URL} onUploadSuccess={fetchFiles} />
 
         <div className="mt-8">
-          <FileList files={files} baseUrl={`${API_BASE_URL}/files/`} />
+          <FileList files={files} baseUrl={`${API_BASE_URL}/home/files`} />
         </div>
       </div>
     </div>

@@ -1,75 +1,98 @@
 import React, { useState } from "react";
 
-function FileUpload({ onUpload }) {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [documentName, setDocumentName] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleFileChange = (e) => setSelectedFile(e.target.files[0]);
+const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
+  const [file, setFile] = useState(null);
+  const [docName, setDocName] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
 
   const handleUpload = async () => {
-    if (!selectedFile || !documentName.trim()) {
-      alert("Please enter document name and select a file.");
+    if (!file || !docName) {
+      alert("Please enter a document name and select a file");
       return;
     }
 
     const formData = new FormData();
-    const data = { documentName };
-    formData.append("file", selectedFile);
-    formData.append("data", JSON.stringify(data));
+    formData.append("file", file);
+    formData.append("data", JSON.stringify({ documentName: docName }));
 
     try {
-      setLoading(true);
-      const response = await fetch(
-        "https://documentupload-0vhz.onrender.com/home/upload",
-        { method: "POST", body: formData }
-      );
+      setUploading(true);
+      setProgress(0);
 
-      if (response.ok) {
-        alert("File uploaded successfully!");
-        onUpload(); // refresh list
-      } else {
-        alert("Upload failed!");
-      }
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${apiBaseUrl}/api/upload`);
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          setProgress(percent);
+        }
+      };
+
+      xhr.onload = () => {
+        setUploading(false);
+        setProgress(0);
+        setDocName("");
+        setFile(null);
+
+        if (xhr.status === 200) {
+          onUploadSuccess();
+        } else {
+          alert("Upload failed: " + xhr.responseText);
+        }
+      };
+
+      xhr.onerror = () => {
+        setUploading(false);
+        alert("Upload failed: network error");
+      };
+
+      xhr.send(formData);
     } catch (error) {
-      console.error("Error uploading:", error);
-      alert("Error connecting to server.");
-    } finally {
-      setLoading(false);
-      setSelectedFile(null);
-      setDocumentName("");
-      document.getElementById("fileInput").value = "";
+      console.error("Upload error:", error);
+      setUploading(false);
     }
   };
 
   return (
-    <div className="flex flex-col space-y-4 mb-6">
-      <input
-        type="text"
-        placeholder="Enter document name"
-        value={documentName}
-        onChange={(e) => setDocumentName(e.target.value)}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2"
-      />
+    <div className="bg-blue-50 p-5 rounded-xl shadow-inner border border-blue-200">
+      <div className="flex flex-col space-y-3">
+        <input
+          type="text"
+          placeholder="Enter document name"
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={docName}
+          onChange={(e) => setDocName(e.target.value)}
+        />
 
-      <input
-        id="fileInput"
-        type="file"
-        onChange={handleFileChange}
-        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
-      />
+        <input
+          type="file"
+          onChange={(e) => setFile(e.target.files[0])}
+          className="block w-full text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-white"
+        />
 
-      <button
-        onClick={handleUpload}
-        disabled={loading}
-        className={`${
-          loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-        } text-white px-4 py-2 rounded-lg transition`}
-      >
-        {loading ? "Uploading..." : "Upload"}
-      </button>
+        <button
+          onClick={handleUpload}
+          disabled={uploading}
+          className={`w-full py-2 text-white font-semibold rounded-lg transition ${
+            uploading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+          }`}
+        >
+          {uploading ? "Uploading..." : "Upload Document"}
+        </button>
+
+        {uploading && (
+          <div className="w-full bg-gray-200 rounded-full h-3 mt-2">
+            <div
+              className="bg-blue-500 h-3 rounded-full transition-all"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+};
 
 export default FileUpload;

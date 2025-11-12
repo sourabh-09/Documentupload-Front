@@ -2,42 +2,39 @@ import React, { useState, useEffect } from "react";
 import FileUpload from "./components/FileUpload";
 import FileList from "./components/FileList";
 
+const API_BASE_URL = "https://your-backend-app.onrender.com"; // <-- change this
+
 function App() {
   const [files, setFiles] = useState([]);
 
-  useEffect(() => {
-    fetchFiles();
-  }, []);
-
   const fetchFiles = async () => {
     try {
-      const response = await fetch("https://documentupload-0vhz.onrender.com/home/files");
+      const response = await fetch(`${API_BASE_URL}/api/files`);
       if (response.ok) {
-        const data = await response.json(); // ["invoice.pdf", "report.docx"]
+        const data = await response.json();
         setFiles(data);
-      } else {
-        console.error("Failed to fetch files");
       }
     } catch (error) {
       console.error("Error fetching files:", error);
     }
   };
 
-  const handleUpload = () => {
-    // Re-fetch file list after upload
+  useEffect(() => {
     fetchFiles();
-  };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <h1 className="text-3xl font-bold text-blue-700 mb-8">📁 Document Upload</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 flex flex-col items-center py-10 px-4">
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-center text-blue-700 mb-6">
+          📄 Document Uploader
+        </h1>
 
-      <div className="w-full max-w-2xl bg-white shadow-md rounded-2xl p-6">
-        <FileUpload onUpload={handleUpload} />
-        <FileList
-          files={files}
-          baseUrl="https://documentupload-0vhz.onrender.com/home/files"
-        />
+        <FileUpload apiBaseUrl={API_BASE_URL} onUploadSuccess={fetchFiles} />
+
+        <div className="mt-8">
+          <FileList files={files} baseUrl={`${API_BASE_URL}/files/`} />
+        </div>
       </div>
     </div>
   );

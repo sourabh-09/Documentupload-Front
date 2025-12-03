@@ -24,27 +24,22 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-200 flex flex-col items-center py-10 px-4">
-      
-      {/* Animated Card Container */}
-      <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 transform transition-all duration-700 animate-fadein">
-        
-        <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-6 tracking-wide animate-slidein">
+    <div className="min-h-screen animate-bgflow flex justify-center items-start pt-10 px-4 sm:px-6 md:px-8">
+
+      <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-8 transform 
+                      animate-cardin">
+
+        <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-6 animate-title">
           📄 Document Uploader
         </h1>
 
-        <FileUpload 
-          apiBaseUrl={API_BASE_URL} 
-          onUploadSuccess={fetchFiles} 
-        />
-
-        <div className="mt-10 animate-fadein-slow">
-          <FileList 
-            files={files} 
-            baseUrl={`${API_BASE_URL}/home/files`} 
-          />
+        <div className="animate-section">
+          <FileUpload apiBaseUrl={API_BASE_URL} onUploadSuccess={fetchFiles} />
         </div>
 
+        <div className="mt-10 animate-list">
+          <FileList files={files} baseUrl={`${API_BASE_URL}/home/files`} />
+        </div>
       </div>
     </div>
   );

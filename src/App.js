@@ -24,45 +24,27 @@ function App() {
   }, []);
 
   return (
-    <div className="
-      min-h-screen 
-      bg-gradient-to-br
-      from-blue-100 via-purple-100 to-pink-100
-      flex justify-center items-center
-      py-10 px-4
-      animate-fadeIn
-    ">
-      <div className="
-        max-w-2xl w-full 
-        bg-white/70 backdrop-blur-xl
-        rounded-3xl shadow-2xl 
-        p-10 
-        transform transition 
-        hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)]
-        animate-slideUp
-      ">
-        <h1 className="
-          text-4xl font-extrabold text-center 
-          bg-gradient-to-r from-blue-600 to-purple-700 text-transparent bg-clip-text
-          mb-8 tracking-wide animate-fadeInSlow
-        ">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-200 flex flex-col items-center py-10 px-4">
+      
+      {/* Animated Card Container */}
+      <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 transform transition-all duration-700 animate-fadein">
+        
+        <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-6 tracking-wide animate-slidein">
           📄 Document Uploader
         </h1>
 
-        <div className="animate-scaleUp">
-          <FileUpload apiBaseUrl={API_BASE_URL} onUploadSuccess={fetchFiles} />
+        <FileUpload 
+          apiBaseUrl={API_BASE_URL} 
+          onUploadSuccess={fetchFiles} 
+        />
+
+        <div className="mt-10 animate-fadein-slow">
+          <FileList 
+            files={files} 
+            baseUrl={`${API_BASE_URL}/home/files`} 
+          />
         </div>
 
-        <h2 className="
-          text-xl font-semibold text-blue-800 mt-10 mb-4
-          animate-fadeIn
-        ">
-          📁 Uploaded Files
-        </h2>
-
-        <div className="animate-fadeInSlow">
-          <FileList files={files} baseUrl={`${API_BASE_URL}/home/files`} />
-        </div>
       </div>
     </div>
   );

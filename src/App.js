@@ -24,21 +24,29 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen animate-bgflow flex justify-center items-start pt-10 px-4 sm:px-6 md:px-8">
+    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-700 via-purple-700 to-blue-700 p-4 flex justify-center items-start">
 
-      <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-8 transform 
-                      animate-cardin">
+      {/* Main Card */}
+      <div className="w-full max-w-md sm:max-w-xl bg-white rounded-3xl shadow-2xl p-6 sm:p-8 mt-6 animate-fadeIn">
 
-        <h1 className="text-4xl font-extrabold text-center text-indigo-700 mb-6 animate-title">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center text-indigo-700 mb-6 animate-slideDown">
           📄 Document Uploader
         </h1>
 
-        <div className="animate-section">
-          <FileUpload apiBaseUrl={API_BASE_URL} onUploadSuccess={fetchFiles} />
+        {/* Upload */}
+        <div className="animate-fadeInDelay">
+          <FileUpload 
+            apiBaseUrl={API_BASE_URL} 
+            onUploadSuccess={fetchFiles} 
+          />
         </div>
 
-        <div className="mt-10 animate-list">
-          <FileList files={files} baseUrl={`${API_BASE_URL}/home/files`} />
+        {/* File List */}
+        <div className="mt-8 animate-fadeInDelay2">
+          <FileList 
+            files={files} 
+            baseUrl={`${API_BASE_URL}/home/files`} 
+          />
         </div>
       </div>
     </div>

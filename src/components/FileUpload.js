@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import confetti from "canvas-confetti/dist/confetti.browser";
+import confetti from "canvas-confetti";
+
 
 const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
   const [file, setFile] = useState(null);

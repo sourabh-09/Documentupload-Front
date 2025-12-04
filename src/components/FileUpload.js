@@ -88,4 +88,94 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
 
         {/* Document Name */}
         <input
-          type="t
+          type="text"
+          placeholder="Enter document name"
+          className="
+            w-full mb-4 p-3 rounded-lg border 
+            focus:outline-none focus:ring-2 focus:ring-blue-400
+          "
+          value={docName}
+          onChange={(e) => setDocName(e.target.value)}
+        />
+
+        {/* Animated Upload Box */}
+        <label
+          className="
+            w-full p-6 mb-4 text-center border-2 border-dashed rounded-xl cursor-pointer 
+            bg-gradient-to-br from-blue-50 to-blue-100
+            hover:from-blue-100 hover:to-blue-200
+            ripple relative overflow-hidden
+          "
+        >
+          <span className="block text-blue-700 font-semibold">
+            {file ? file.name : "Click to select a file"}
+          </span>
+          <input
+            type="file"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+        </label>
+
+        {/* Animated Progress Bar */}
+        {uploading && (
+          <div className="w-full bg-gray-300 h-3 rounded-full overflow-hidden mb-3">
+            <div
+              className="h-3 bg-green-500 animate-pulse"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        )}
+
+        {/* Neon Upload Button */}
+        <button
+          onClick={handleUpload}
+          className="
+            w-full py-3 text-lg font-bold text-white 
+            bg-blue-600 rounded-xl 
+            shadow-lg shadow-blue-400/50 
+            hover:bg-blue-700 transition relative overflow-hidden ripple
+          "
+        >
+          Upload 🚀
+        </button>
+
+        {/* Success Message */}
+        {successMsg && (
+          <p className="text-center text-green-600 font-semibold mt-3 animate-bounce">
+            {successMsg}
+          </p>
+        )}
+      </div>
+
+      {/* Ripple Click Animation CSS */}
+      <style>
+        {`
+          .ripple::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            transform: scale(1);
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.4s;
+          }
+          .ripple:active::after {
+            transform: scale(20);
+            opacity: 1;
+            transition: 0s;
+          }
+
+          .neon-box {
+            box-shadow: 0 0 10px #4ea9ff, 0 0 20px #4ea9ff;
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+export default FileUpload;

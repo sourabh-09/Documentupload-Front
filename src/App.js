@@ -24,30 +24,36 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-700 via-purple-700 to-blue-700 p-4 flex justify-center items-start">
-
-      {/* Main Card */}
-      <div className="w-full max-w-md sm:max-w-xl bg-white rounded-3xl shadow-2xl p-6 sm:p-8 mt-6 animate-fadeIn">
-
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center text-indigo-700 mb-6 animate-slideDown">
-          📄 Document Uploader
+    <div
+      className="
+      min-h-screen
+      flex flex-col items-center justify-start
+      bg-gradient-to-br from-blue-200 via-blue-300 to-blue-400
+      py-10 px-4
+    "
+    >
+      {/* MAIN CARD */}
+      <div
+        className="
+        w-full max-w-md sm:max-w-lg md:max-w-xl
+        bg-white
+        rounded-2xl shadow-2xl
+        p-6 sm:p-8
+        border border-blue-300
+      "
+      >
+        <h1 className="text-3xl font-extrabold text-center text-blue-700 drop-shadow mb-6">
+          📄 Document Manager
         </h1>
 
-        {/* Upload */}
-        <div className="animate-fadeInDelay">
-          <FileUpload 
-            apiBaseUrl={API_BASE_URL} 
-            onUploadSuccess={fetchFiles} 
-          />
-        </div>
+        {/* Upload Box */}
+        <FileUpload apiBaseUrl={API_BASE_URL} onUploadSuccess={fetchFiles} />
 
-        {/* File List */}
-        <div className="mt-8 animate-fadeInDelay2">
-          <FileList 
-            files={files} 
-            baseUrl={`${API_BASE_URL}/home/files`} 
-          />
-        </div>
+        {/* Divider */}
+        <div className="my-6 border-t border-gray-300"></div>
+
+        {/* Files List */}
+        <FileList files={files} baseUrl={`${API_BASE_URL}/home/files`} />
       </div>
     </div>
   );

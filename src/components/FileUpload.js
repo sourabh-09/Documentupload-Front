@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import confetti from "canvas-confetti";
 
-
 const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
   const [file, setFile] = useState(null);
   const [docName, setDocName] = useState("");
@@ -9,26 +8,14 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
   const [uploading, setUploading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  // 🎉 Confetti Explosion
   const fireConfetti = () => {
-    const duration = 1000;
-    const end = Date.now() + duration;
-
-    (function frame() {
-      confetti({
-        particleCount: 4,
-        spread: 70,
-        startVelocity: 30,
-        origin: { x: Math.random(), y: Math.random() - 0.2 },
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    })();
+    confetti({
+      particleCount: 80,
+      spread: 60,
+      origin: { y: 0.6 }
+    });
   };
 
-  // 🚀 Upload Function
   const handleUpload = async () => {
     if (!file || !docName) {
       alert("Please select a file & enter document name.");
@@ -56,13 +43,13 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
 
       if (response.ok) {
         setProgress(100);
-        fireConfetti(); // 🎉 FIRE CONFETTI
+        fireConfetti();
         setSuccessMsg("🎉 Document uploaded successfully!");
         onUploadSuccess();
       } else {
         setSuccessMsg("❌ Upload failed!");
       }
-    } catch (error) {
+    } catch (err) {
       setSuccessMsg("❌ Network error!");
     }
 
@@ -70,20 +57,16 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-xl mx-auto">
 
-      {/* Animated Upload Card */}
-      <div
-        className="
-        bg-white 
-        p-6 rounded-xl shadow-2xl 
-        border border-blue-300 
-        transition-all duration-300 
-        hover:shadow-blue-400/40 hover:-translate-y-1 
+      {/* FIXED, RESPONSIVE CARD */}
+      <div className="
+        bg-white p-6 rounded-2xl shadow-xl border border-blue-200
+        transition-all duration-300
+        hover:shadow-blue-300/40 hover:-translate-y-1
         neon-box
-      "
-      >
-        <h2 className="text-xl font-bold text-blue-700 mb-4 text-center">
+      ">
+        <h2 className="text-2xl font-bold text-blue-700 mb-5 text-center">
           Upload Document
         </h2>
 
@@ -92,25 +75,29 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
           type="text"
           placeholder="Enter document name"
           className="
-            w-full mb-4 p-3 rounded-lg border 
+            w-full p-3 mb-4 rounded-lg border
             focus:outline-none focus:ring-2 focus:ring-blue-400
+            text-sm sm:text-base
           "
           value={docName}
           onChange={(e) => setDocName(e.target.value)}
         />
 
-        {/* Animated Upload Box */}
+        {/* File Select Box — FIXED HEIGHT */}
         <label
           className="
-            w-full p-6 mb-4 text-center border-2 border-dashed rounded-xl cursor-pointer 
+            block w-full
+            py-3 px-4
+            mb-4 text-center border-2 border-dashed rounded-xl cursor-pointer
             bg-gradient-to-br from-blue-50 to-blue-100
             hover:from-blue-100 hover:to-blue-200
             ripple relative overflow-hidden
           "
         >
-          <span className="block text-blue-700 font-semibold">
+          <span className="text-blue-700 font-medium text-sm sm:text-base truncate block">
             {file ? file.name : "Click to select a file"}
           </span>
+
           <input
             type="file"
             className="hidden"
@@ -118,9 +105,9 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
           />
         </label>
 
-        {/* Animated Progress Bar */}
+        {/* Progress bar */}
         {uploading && (
-          <div className="w-full bg-gray-300 h-3 rounded-full overflow-hidden mb-3">
+          <div className="w-full bg-gray-300 h-3 rounded-full overflow-hidden mb-4">
             <div
               className="h-3 bg-green-500 animate-pulse"
               style={{ width: `${progress}%` }}
@@ -128,14 +115,14 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
           </div>
         )}
 
-        {/* Neon Upload Button */}
+        {/* Upload button */}
         <button
           onClick={handleUpload}
           className="
-            w-full py-3 text-lg font-bold text-white 
-            bg-blue-600 rounded-xl 
-            shadow-lg shadow-blue-400/50 
-            hover:bg-blue-700 transition relative overflow-hidden ripple
+            w-full py-3 text-lg font-bold text-white
+            bg-blue-600 rounded-xl
+            shadow-lg shadow-blue-400/50
+            hover:bg-blue-700 transition ripple relative overflow-hidden
           "
         >
           Upload 🚀
@@ -143,13 +130,13 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
 
         {/* Success Message */}
         {successMsg && (
-          <p className="text-center text-green-600 font-semibold mt-3 animate-bounce">
+          <p className="text-center text-green-600 font-semibold mt-4 animate-bounce">
             {successMsg}
           </p>
         )}
       </div>
 
-      {/* Ripple Click Animation CSS */}
+      {/* Ripple CSS */}
       <style>
         {`
           .ripple::after {
@@ -171,7 +158,7 @@ const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
           }
 
           .neon-box {
-            box-shadow: 0 0 10px #4ea9ff, 0 0 20px #4ea9ff;
+            box-shadow: 0 0 8px #4ea9ff, 0 0 20px #b9e3ff inset;
           }
         `}
       </style>

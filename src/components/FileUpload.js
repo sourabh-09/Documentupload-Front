@@ -3,116 +3,106 @@ import React, { useState } from "react";
 const FileUpload = ({ apiBaseUrl, onUploadSuccess }) => {
   const [file, setFile] = useState(null);
   const [docName, setDocName] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState(null); // ✅ For success/error messages
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleUpload = async () => {
-    if (!file || !docName) {
-      setMessage({ type: "error", text: "Please enter a document name and select a file" });
+    if (!file || !docName.trim()) {
+      setMessage("Please enter document name and choose a file.");
       return;
     }
+
+    setLoading(true);
+    setMessage("");
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("data", JSON.stringify({ documentName: docName }));
 
     try {
-      setUploading(true);
-      setProgress(0);
-      setMessage(null);
+      const res = await fetch(`${apiBaseUrl}/home/upload`, {
+        method: "POST",
+        body: formData,
+      });
 
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", `${apiBaseUrl}/home/upload`);
-
-      // Track progress
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setProgress(percent);
-        }
-      };
-
-      xhr.onload = () => {
-        setUploading(false);
-        setProgress(0);
+      if (res.ok) {
+        setMessage("✅ Upload successful!");
         setDocName("");
         setFile(null);
-
-        if (xhr.status === 200) {
-          setMessage({ type: "success", text: "✅ Upload successful!" });
-          onUploadSuccess();
-
-          // Hide success message after 3 seconds
-          setTimeout(() => setMessage(null), 3000);
-        } else {
-          setMessage({ type: "error", text: `❌ Upload failed: ${xhr.responseText}` });
-        }
-      };
-
-      xhr.onerror = () => {
-        setUploading(false);
-        setMessage({ type: "error", text: "❌ Network error during upload" });
-      };
-
-      xhr.send(formData);
-    } catch (error) {
-      console.error("Upload error:", error);
-      setUploading(false);
-      setMessage({ type: "error", text: "Unexpected error occurred" });
+        onUploadSuccess();
+      } else {
+        setMessage("❌ Upload failed.");
+      }
+    } catch (err) {
+      setMessage("⚠ Network error.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-blue-50 p-5 rounded-xl shadow-inner border border-blue-200">
-      <div className="flex flex-col space-y-3">
+    <div className="w-full">
+
+      {/* Animated Upload Box */}
+      <div className="
+          border-4 border-indigo-400 
+          rounded-xl p-6 mb-4 
+          bg-indigo-50 
+          shadow-lg 
+          animate-uploadbox
+          hover:scale-[1.03] transition-all duration-300
+        ">
+
+        <label className="block font-semibold text-indigo-700 mb-2">
+          Document Name
+        </label>
+
         <input
           type="text"
-          placeholder="Enter document name"
-          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={docName}
           onChange={(e) => setDocName(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg mb-4 
+                     focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Enter document name..."
         />
 
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="block w-full text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-white"
-        />
+        <label className="block font-semibold text-indigo-700 mb-2">
+          Choose File
+        </label>
 
-        <button
-          onClick={handleUpload}
-          disabled={uploading}
-          className={`w-full py-2 text-white font-semibold rounded-lg transition ${
-            uploading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          }`}
-        >
-          {uploading ? "Uploading..." : "Upload Document"}
-        </button>
+        <div className="flex items-center gap-3">
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="w-full"
+          />
+        </div>
 
-        {/* Progress bar */}
-        {uploading && (
-          <div className="w-full bg-gray-200 rounded-full h-3 mt-2 overflow-hidden">
-            <div
-              className="bg-blue-500 h-3 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        )}
-
-        {/* ✅ Success / ❌ Error message */}
-        {message && (
-          <div
-            className={`mt-3 text-center font-medium p-2 rounded-lg animate-fade-in ${
-              message.type === "success"
-                ? "bg-green-100 text-green-700 border border-green-300"
-                : "bg-red-100 text-red-700 border border-red-300"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
       </div>
+
+      {/* Ripple Button */}
+      <button
+        onClick={handleUpload}
+        disabled={loading}
+        className="
+          relative overflow-hidden 
+          bg-indigo-600 text-white font-bold 
+          px-6 py-3 rounded-xl w-full 
+          shadow-lg 
+          hover:bg-indigo-700 
+          active:scale-95 
+          transition-all duration-300
+          ripple
+        "
+      >
+        {loading ? "Uploading..." : "Upload Document"}
+      </button>
+
+      {message && (
+        <p className="text-center mt-3 font-semibold text-indigo-700">
+          {message}
+        </p>
+      )}
     </div>
   );
 };
